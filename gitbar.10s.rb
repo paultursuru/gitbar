@@ -21,20 +21,21 @@ end
 
 def format_pull_requests
   display_prs(pr: REVIEW_REQUESTED_PRS, title: 'review requested', emoji: '👀', to_review: true)
+  separator
   display_prs(pr: REVIEWED_PRS, emoji: '👍', title: 'reviewed')
-  display_prs(pr: MY_PRS, emoji: '🤓', title: 'my prs')
+  separator
+  display_prs(pr: MY_PRS, emoji: '🤓', title: 'owned open PRs')
 end
 
 def display_prs(pr:, title:, emoji: '👍', to_review: false)
-  puts "---"
-  puts "#{emoji} #{pr.count} #{title}"
+  puts "#{emoji} #{pr.count} #{title.gsub("\n", ' ')}"
   pr.each do |pr|
-    puts "-- #{pr['title'].chars.first(30).join}#{pr['title'].chars.length > 30 ? '...' : ''} by #{pr['author']['login']} (##{pr['number']})"
-    time_since_last_update(pr['updatedAt']) if to_review
-    puts "---- #{mergeable_status_icon(pr['mergeable'])} #{mergeable_status_text(pr['mergeable'])}"
+    puts "-- #{mergeable_status_icon(pr['mergeable'])} #{pr['title'].chars.first(30).join}#{pr['title'].chars.length > 30 ? '...' : ''} by #{pr['author']['login']} (##{pr['number']})"
     puts "---- Check it out ! | href=#{pr['url']}"
+    puts "---- #{mergeable_status_icon(pr['mergeable'])} #{mergeable_status_text(pr['mergeable'])}"
+    time_since_last_update(pr['updatedAt']) if to_review
   end
-  puts "---"
+  return nil
 end
 
 def time_since_last_update(updated_at)
@@ -81,10 +82,14 @@ def mergeable_status_icon(mergeable)
   when 'CONFLICTING'
     '🔴'
   when 'MERGEABLE'
-    '🟢'
-  else
     '🟠'
+  else
+    '🤷‍♀️'
   end
+end
+
+def separator
+  puts "---"
 end
 
 def mergeable_status_text(mergeable)
