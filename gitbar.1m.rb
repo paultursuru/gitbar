@@ -93,6 +93,17 @@ def status_icon(pr)
   end
 end
 
+def status_color(pr)
+  case pr['statusCheckRollup'][0]['state']
+  when 'SUCCESS'
+    'green'
+  when 'FAILURE'
+    'red'
+  else
+    'yellow'
+  end
+end
+
 def status_text(pr)
   "#{pr['statusCheckRollup'][0]['state'].downcase.capitalize} #{pr['statusCheckRollup'][0]['context']}"
 end
@@ -116,6 +127,17 @@ def mergeable_text(pr)
     'conflicts'
   else
     'unknown'
+  end
+end
+
+def mergeable_color(pr)
+  case pr['mergeable']
+  when 'MERGEABLE'
+    'green'
+  when 'CONFLICTING'
+    'red'
+  else
+    'yellow'
   end
 end
 
@@ -181,8 +203,8 @@ def display_prs(pr:, title:, emoji: '👍', to_review: false)
     insert_line(body: format_pr(pr), level: 1)
     insert_line(body: "Check this PR", level: 2, icon: '🔗', options: { href: pr['url'] })
     insert_reviews(pr)
-    insert_line(body: status_text(pr), level: 2, icon: status_icon(pr), options: { color: 'yellow' })
-    insert_line(body: mergeable_text(pr), level: 2, icon: mergeable_icon(pr), options: { color: 'yellow' })
+    insert_line(body: status_text(pr), level: 2, icon: status_icon(pr), options: { color: status_color(pr) })
+    insert_line(body: mergeable_text(pr), level: 2, icon: mergeable_icon(pr), options: { color: mergeable_color(pr) })
     insert_line(body: time_since(pr['updatedAt']), level: 2) if to_review
   end
 end
@@ -191,7 +213,15 @@ def insert_reviews(pr)
   insert_line(body: "no reviews yet", level: 2, icon: '🤷‍♀️') and return if pr['reviews'].empty?
 
   pr['reviews'].group_by { |review| review['author']['login'] }.each do |login, reviews|
-    insert_line(body: "reviewed by #{login} : #{reviews.last['state']}", level: 2, icon: review_icon(reviews.last))
+    case reviews.last['state']
+    when 'APPROVED'
+      text_color = 'green'
+    when 'CHANGES_REQUESTED'
+      text_color = 'red'
+    else
+      text_color = 'yellow'
+    end
+    insert_line(body: "#{reviews.last['state'].downcase.capitalize.gsub('_', ' ')} by #{login}", level: 2, icon: review_icon(reviews.last), options: { color: text_color })
   end
 end
 
