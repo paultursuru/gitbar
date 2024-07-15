@@ -65,9 +65,10 @@ def main_status_text
   return 'No open PRs' if MY_PRS.empty?
 
   groups = MY_PRS.group_by { |pr| can_be_merged(pr) }
-  text = "#{groups[true] ? groups[true].count : 0} of your PRs are mergeable"
-  refused_count = groups[false] ? groups[false].count { |pr| pr['reviews'].any? { |review| review['state'] == 'CHANGES_REQUESTED' } } : 0
-  text += " and #{refused_count} waiting for review" if refused_count > 0
+  true_count = groups[true] ? groups[true].count : 0
+  false_count = groups[false] ? groups[false].count { |pr| pr['reviews'].any? { |review| review['state'] == 'CHANGES_REQUESTED' } } : 0
+  text = "#{true_count} of your PRs #{true_count > 1 ? 'are' : 'is'} mergeable"
+  text += " and #{false_count} waiting for review" if false_count > 0
   text
 end
 
@@ -122,11 +123,11 @@ end
 def mergeable_text(pr)
   case pr['mergeable']
   when 'MERGEABLE'
-    'no conflict'
+    'No conflict'
   when 'CONFLICTING'
-    'conflicts'
+    'Conflicts'
   else
-    'unknown'
+    pr['mergeable'].downcase.capitalize
   end
 end
 
@@ -190,18 +191,17 @@ def display_menu
 end
 
 def format_pull_requests
-  display_prs(pr: REVIEW_REQUESTED_PRS, title: 'review requested', emoji: '👀', to_review: true)
+  display_prs(pr: REVIEW_REQUESTED_PRS, title: 'review requested', icon: '👀', to_review: true)
   separator
-  display_prs(pr: REVIEWED_PRS, emoji: '👍', title: 'reviewed')
+  display_prs(pr: REVIEWED_PRS, icon: '👍', title: 'reviewed')
   separator
-  display_prs(pr: MY_PRS, emoji: '🤓', title: 'owned open PRs')
+  display_prs(pr: MY_PRS, icon: '🤓', title: 'owned open PRs')
 end
 
-def display_prs(pr:, title:, emoji: '👍', to_review: false)
-  insert_line(body: "#{pr.count} #{title.gsub("\n", ' ')}", level: 0, icon: emoji)
+def display_prs(pr:, title:, icon: '👍', to_review: false)
+  insert_line(body: "#{pr.count} #{title.gsub("\n", ' ')}", level: 0, icon: icon)
   pr.each do |pr|
-    insert_line(body: format_pr(pr), level: 1)
-    insert_line(body: "Check this PR", level: 2, icon: '🔗', options: { href: pr['url'] })
+    insert_line(body: format_pr(pr), level: 1, icon: '🔗',options: { href: pr['url'] })
     insert_reviews(pr)
     insert_line(body: status_text(pr), level: 2, icon: status_icon(pr), options: { color: status_color(pr) })
     insert_line(body: mergeable_text(pr), level: 2, icon: mergeable_icon(pr), options: { color: mergeable_color(pr) })
