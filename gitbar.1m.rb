@@ -23,7 +23,12 @@ require 'date'
 
 # CONTROLLER
 def fetch_pull_requests
-  output = `/opt/homebrew/bin/gh pr list --repo #{REPO} --state open --json title,number,url,reviewRequests,author,updatedAt,mergeable,statusCheckRollup`
+  output = `/opt/homebrew/bin/gh pr list --repo #{REPO} --state open --json title,number,url,reviews,reviewRequests,author,updatedAt,mergeable,statusCheckRollup`
+  JSON.parse(output)
+end
+
+def fetch_pr_details(pr)
+  output = `/opt/homebrew/bin/gh pr view #{pr['number']} --repo #{REPO} --json title,number,url,reviews,statusCheckRollup`
   JSON.parse(output)
 end
 
@@ -49,13 +54,21 @@ end
 
 # HELPERS
 def main_status_icon
-  return '😊' if REVIEW_REQUESTED_PRS.empty?
+  return '😊' if MY_PRS.empty? || MY_PRS.all? { |pr| pr['reviews'].empty? }
 
-  if REVIEW_REQUESTED_PRS.count < 2
-    '🟠'
-  else
-    '🔴'
-  end
+  groups = MY_PRS.group_by { |pr| can_be_merged(pr) }
+  refused_count = groups[false].count { |pr| pr['reviews'].any? { |review| review['state'] == 'CHANGES_REQUESTED' } }
+  groups[true].count > refused_count ? '🟢' : '🔴'
+end
+
+def main_status_text
+  return 'No open PRs' if MY_PRS.empty?
+
+  groups = MY_PRS.group_by { |pr| can_be_merged(pr) }
+  text = "#{groups[true].count} of your PRs are mergeable"
+  refused_count = groups[false].count { |pr| pr['reviews'].any? { |review| review['state'] == 'CHANGES_REQUESTED' } }
+  text += " and #{refused_count} waiting for review" if refused_count > 0
+  text
 end
 
 def mergeable_icon(pr)
@@ -96,7 +109,25 @@ def mergeable_icon(pr)
 end
 
 def mergeable_text(pr)
-  pr['mergeable'].downcase.capitalize
+  case pr['mergeable']
+  when 'MERGEABLE'
+    'no conflict'
+  when 'CONFLICTING'
+    'conflicts'
+  else
+    'unknown'
+  end
+end
+
+def review_icon(pr_review)
+  case pr_review['state']
+  when 'APPROVED'
+    '✅'
+  when 'CHANGES_REQUESTED'
+    '❌'
+  else
+    '⚠️'
+  end
 end
 
 def format_pr(pr)
@@ -133,7 +164,7 @@ def separator
 end
 
 def display_menu
-  insert_line(body: "#{main_status_icon} #{REPO}", level: 0)
+  insert_line(body: "#{main_status_icon} #{main_status_text}", level: 0)
 end
 
 def format_pull_requests
@@ -149,10 +180,30 @@ def display_prs(pr:, title:, emoji: '👍', to_review: false)
   pr.each do |pr|
     insert_line(body: format_pr(pr), level: 1)
     insert_line(body: "Check this PR", level: 2, icon: '🔗', options: { href: pr['url'] })
+    insert_reviews(pr)
     insert_line(body: status_text(pr), level: 2, icon: status_icon(pr), options: { color: 'yellow' })
     insert_line(body: mergeable_text(pr), level: 2, icon: mergeable_icon(pr), options: { color: 'yellow' })
     insert_line(body: time_since(pr['updatedAt']), level: 2) if to_review
   end
+end
+
+def insert_reviews(pr)
+  insert_line(body: "no reviews yet", level: 2, icon: '🤷‍♀️') and return if pr['reviews'].empty?
+
+  pr['reviews'].group_by { |review| review['author']['login'] }.each do |login, reviews|
+    insert_line(body: "reviewed by #{login} : #{reviews.last['state']}", level: 2, icon: review_icon(reviews.last))
+  end
+end
+
+def can_be_merged(pr)
+  return false unless pr['mergeable'] == 'MERGEABLE' && pr['reviews'].any?
+
+  pr['reviews'].group_by { |review| review['author']['login'] }.each do |login, reviews|
+    return false if reviews.last['state'] == 'CHANGES_REQUESTED'
+
+    return reviews.last['state'] == 'APPROVED'
+  end
+  nil
 end
 
 # CONFIG
