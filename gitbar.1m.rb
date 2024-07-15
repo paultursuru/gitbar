@@ -57,16 +57,16 @@ def main_status_icon
   return '😊' if MY_PRS.empty? || MY_PRS.all? { |pr| pr['reviews'].empty? }
 
   groups = MY_PRS.group_by { |pr| can_be_merged(pr) }
-  refused_count = groups[false].count { |pr| pr['reviews'].any? { |review| review['state'] == 'CHANGES_REQUESTED' } }
-  groups[true].count > refused_count ? '🟢' : '🔴'
+  refused_count = groups[false] ? groups[false].count { |pr| pr['reviews'].any? { |review| review['state'] == 'CHANGES_REQUESTED' } } : 0
+  groups[true] ? (groups[true].count > refused_count ? '🟢' : '🔴') : '🟠'
 end
 
 def main_status_text
   return 'No open PRs' if MY_PRS.empty?
 
   groups = MY_PRS.group_by { |pr| can_be_merged(pr) }
-  text = "#{groups[true].count} of your PRs are mergeable"
-  refused_count = groups[false].count { |pr| pr['reviews'].any? { |review| review['state'] == 'CHANGES_REQUESTED' } }
+  text = "#{groups[true] ? groups[true].count : 0} of your PRs are mergeable"
+  refused_count = groups[false] ? groups[false].count { |pr| pr['reviews'].any? { |review| review['state'] == 'CHANGES_REQUESTED' } } : 0
   text += " and #{refused_count} waiting for review" if refused_count > 0
   text
 end
