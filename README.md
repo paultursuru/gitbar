@@ -20,7 +20,7 @@ gh auth login
 
 Inside gitbar_app/config, you'll find a `settings.json.example`, update the username and repositories list before next step and rename it to `settings.json`.
 
-Finally, there is [a script](https://github.com/paultursuru/gitbar/blob/feature/turn_it_into_ruby_app/copy_to_plugins.sh) to install the app in xbar plugins. Make this script executable and run it to copy the GitBar plugin inside the xbar plugins folder.
+Finally, there is [a script](https://github.com/paultursuru/gitbar/blob/9b854c7ae43783a9a45ce98a7e5e0b8c81c16d08/copy_to_plugins.sh) to install the app in xbar plugins. Make this script executable and run it to copy the GitBar plugin inside the xbar plugins folder.
 ```
 chmod +x copy_to_plugins.sh
 ./copy_to_plugins.sh
