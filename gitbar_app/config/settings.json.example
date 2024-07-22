@@ -2,7 +2,12 @@
     "username": "paultursuru",
     "repositories": [
         {
-            "name": "paultursuru/gitbar"
+            "name": "paultursuru/gitbar",
+            "default_branch": "main"
+        },
+        {
+            "name": "other/repo",
+            "default_branch": "master"
         }
     ]
 }

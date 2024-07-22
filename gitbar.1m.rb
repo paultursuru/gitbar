@@ -11,8 +11,7 @@ require_relative 'gitbar_app/models/repository.rb'
 require_relative 'gitbar_app/view.rb'
 
 settings = JSON.parse(File.read('gitbar_app/config/settings.json'))
-repositories = settings['repositories'].map { |repo| Repository.new(name: repo['name']) }
+repositories = settings['repositories'].map { |repo| Repository.new(name: repo['name'], default_branch: repo['default_branch']) }
 USERNAME = settings['username']
 view = View.new(repositories: repositories)
 view.start
-

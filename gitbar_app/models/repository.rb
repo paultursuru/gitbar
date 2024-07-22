@@ -3,10 +3,11 @@ require_relative 'pull_request'
 require_relative 'review_request'
 
 class Repository
-  attr_accessor :name, :pull_requests, :url, :status, :status_details
+  attr_accessor :name, :pull_requests, :url, :status, :status_details, :default_branch
 
-  def initialize(name:)
+  def initialize(name:, default_branch:)
     @name = name
+    @default_branch = default_branch
     @pull_requests = []
     @url = nil
     add_pull_requests
@@ -48,9 +49,9 @@ class Repository
 
   def get_status
     begin
-      output = `/opt/homebrew/bin/gh api repos/#{@name}/commits/main/status`
+      output = `/opt/homebrew/bin/gh api repos/#{@name}/commits/#{@default_branch}/status`
     rescue
-      output = `/usr/local/bin/gh api repos/#{@name}/commits/main/status`
+      output = `/usr/local/bin/gh api repos/#{@name}/commits/#{@default_branch}/status`
     end
     @status = JSON.parse(output)['state']
     @status_details = JSON.parse(output)['statuses']
