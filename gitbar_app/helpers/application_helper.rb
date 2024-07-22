@@ -21,6 +21,8 @@ module ApplicationHelper
   end
 
   def status_icon(status:)
+    return '🟢' if status.nil?
+
     case status.downcase
     when 'success', 'mergeable'
       '🟢'
@@ -32,7 +34,9 @@ module ApplicationHelper
   end
   
   def status_color(pr)
-    case pr.statusCheckRollupState
+    return 'green' if pr.status_check_rollup_state.nil?
+
+    case pr.status_check_rollup_state
     when 'SUCCESS'
       'green'
     when 'FAILURE'
@@ -43,7 +47,9 @@ module ApplicationHelper
   end
   
   def status_text(pr)
-    "#{pr.statusCheckRollupState&.downcase&.capitalize} #{pr.statusCheckRollupContext}"
+    return 'No status' if pr.status_check_rollup_state.nil?
+
+    "#{pr.status_check_rollup_state&.downcase&.capitalize} #{pr.status_check_rollup_context}"
   end
 
   def format_pr(pr)
