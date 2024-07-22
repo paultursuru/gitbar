@@ -207,8 +207,9 @@ def can_be_merged(pr)
 end
 
 # CONFIG
-REPO = 'mvaragnat/wemind'
-USERNAME = 'paultursuru'
+settings = JSON.parse(File.read('config/settings.json'))
+REPO = settings['repo']
+USERNAME = settings['username']
 PULL_REQUESTS = fetch_pull_requests
 REVIEW_REQUESTED_PRS = review_requested_prs
 REVIEWED_PRS = reviewed_prs
