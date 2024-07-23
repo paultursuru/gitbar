@@ -1,8 +1,8 @@
 # GitBar
 GitBar is an [xbar plugin](https://github.com/matryer/xbar-plugins) that will keep you updated on the branches and open pull requests on one or many repository. It refreshes every 1 minute.
 
+![image](https://github.com/user-attachments/assets/65a0d061-377c-4e44-8dc2-653a3b0fa673)
 
-![image](https://github.com/user-attachments/assets/ab99b921-86ce-4642-bead-24a55be659f2)
 
 # Installation
 Git Clone this repo, cd in the folder and run the following commands to install the plugin:
