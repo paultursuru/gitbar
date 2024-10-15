@@ -19,6 +19,9 @@ gh auth login
 ```
 
 Inside gitbar_app/config, you'll find a `settings.json.example`, update the username and repositories list before next step and rename it to `settings.json`.
+This file here : 
+<img width="695" alt="image" src="https://github.com/user-attachments/assets/e0f6b640-0be0-4838-a110-3988074e63f0">
+
 
 Finally, there is [a script](https://github.com/paultursuru/gitbar/blob/9b854c7ae43783a9a45ce98a7e5e0b8c81c16d08/copy_to_plugins.sh) to install the app in xbar plugins. Make this script executable and run it to copy the GitBar plugin inside the xbar plugins folder.
 ```
