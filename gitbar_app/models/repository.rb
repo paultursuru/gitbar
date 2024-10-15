@@ -21,9 +21,9 @@ class Repository
     # Try to use the homebrew version of gh,
     # if it's not available, use the macOS version.
     begin
-      output = `/opt/homebrew/bin/gh pr list --repo #{@name} --state open --json title,number,url,reviews,reviewRequests,author,updatedAt,mergeable,statusCheckRollup`
+      output = `/opt/homebrew/bin/gh pr list --repo #{@name} --state open --json title,number,url,reviews,reviewRequests,author,updatedAt,mergeable,statusCheckRollup,headRefName`
     rescue
-      output = `/usr/local/bin/gh pr list --repo #{@name} --state open --json title,number,url,reviews,reviewRequests,author,updatedAt,mergeable,statusCheckRollup`
+      output = `/usr/local/bin/gh pr list --repo #{@name} --state open --json title,number,url,reviews,reviewRequests,author,updatedAt,mergeable,statusCheckRollup,headRefName`
     end
     json = JSON.parse(output)
     json.each do |pr|

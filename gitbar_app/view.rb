@@ -56,7 +56,8 @@ class View
   def display_prs(prs_data:, title:, icon: '👍', to_review: false)
     insert_line(body: "#{prs_data.count} #{title.gsub("\n", ' ')}", level: 0, icon: icon)
     prs_data.each do |pr|
-      insert_line(body: format_pr(pr), level: 1, icon: '🔗',options: { href: pr.url })
+      insert_line(body: format_pr(pr), level: 1, options: { href: pr.url })
+      insert_line(body: pr.head_ref_name, level: 2, icon: '🔗', options: { href: pr.url })
       insert_reviews(pr)
       insert_line(body: status_text(pr), level: 2, icon: status_icon(status: pr.status_check_rollup_state), options: { color: status_color(pr), href: pr.status_check_rollup })
       insert_line(body: mergeable_text(pr), level: 2, icon: status_icon(status: pr.mergeable), options: { color: mergeable_color(pr) })
