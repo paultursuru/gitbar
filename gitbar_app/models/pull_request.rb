@@ -1,7 +1,7 @@
 require_relative 'review'
 
 class PullRequest
-  attr_accessor :title, :number, :url, :status_check_rollup, :status_check_rollup_state, :status_check_rollup_context, :author, :updated_at, :mergeable, :reviews, :review_requests
+  attr_accessor :title, :number, :url, :status_check_rollup, :status_check_rollup_state, :status_check_rollup_context, :author, :updated_at, :mergeable, :reviews, :review_requests, :head_ref_name
 
   def initialize(pr_data:)
     @title = pr_data.dig('title')
@@ -13,6 +13,7 @@ class PullRequest
     @author = pr_data.dig('author', 'login')
     @updated_at = pr_data.dig('updatedAt')
     @mergeable = pr_data.dig('mergeable')
+    @head_ref_name = pr_data.dig('headRefName')
     @reviews = []
     @review_requests = []
     generate_reviews(reviews_data: pr_data.dig('reviews'))

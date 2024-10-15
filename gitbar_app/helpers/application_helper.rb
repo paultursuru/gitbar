@@ -3,20 +3,20 @@ require 'date'
 module ApplicationHelper
   def main_status_icon(repository:)
     return '😊' if repository.my_prs.empty? || repository.my_prs.all? { |pr| pr.reviews.empty? }
-  
-    groups = repository.my_prs.group_by { |pr| pr.can_be_merged? }
-    refused_count = groups[false] ? groups[false].count { |pr| pr.reviews.any? { |review| review.state == 'CHANGES_REQUESTED' } } : 0
-    groups[true] ? (groups[true].count > refused_count ? '🟢' : '🔴') : '🟠'
+    
+    status_icon(status: repository.status)
   end
   
   def main_status_text(repository:)
     return 'No open PRs' if repository.my_prs.empty?
   
     groups = repository.my_prs.group_by { |pr| pr.can_be_merged? }
+    text = repository.name.split('/').last
     true_count = groups[true] ? groups[true].count : 0
     false_count = groups[false] ? groups[false].count { |pr| pr.reviews.any? { |review| review.state == 'CHANGES_REQUESTED' } } : 0
-    text = "#{true_count} PR#{true_count > 1 ? 's' : ''} can be merged"
-    text += " and #{false_count} have changes requested" if false_count > 0
+    text += " • #{true_count} ✅" if true_count > 0
+    text += " • #{false_count} ❌" if false_count > 0
+    text += " • #{repository.review_requested_prs.count} 👀" if repository.review_requested_prs.count > 0
     text
   end
 
