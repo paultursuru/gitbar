@@ -1,3 +1,5 @@
+# ReviewRequest
+# Value object representing a pending reviewer on a PR.
 class ReviewRequest
   attr_reader :author
 

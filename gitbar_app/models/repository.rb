@@ -1,7 +1,9 @@
-require 'json'
 require_relative 'pull_request'
 require_relative 'review_request'
 
+# Repository
+# Value object for a GitHub repository with pull requests,
+# exposing convenience predicates for ownership and mergeability.
 class Repository
   attr_accessor :name, :pull_requests, :url, :status, :status_details, :default_branch
 
@@ -14,7 +16,7 @@ class Repository
     @url = "https://github.com/#{@name}"
     @status = nil
     @status_details = nil
-    get_status
+    current_status
   end
 
   def add_pull_requests
@@ -47,7 +49,7 @@ class Repository
     review_requests.any? { |review_request| review_request.author == USERNAME }
   end
 
-  def get_status
+  def current_status
     begin
       output = `/opt/homebrew/bin/gh api repos/#{@name}/commits/#{@default_branch}/status`
     rescue
@@ -55,5 +57,9 @@ class Repository
     end
     @status = JSON.parse(output)['state']
     @status_details = JSON.parse(output)['statuses']
+  end
+
+  def simple_name
+    @name.split('/').last
   end
 end
