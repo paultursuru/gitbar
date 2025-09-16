@@ -29,4 +29,10 @@ chmod +x copy_to_plugins.sh
 ./copy_to_plugins.sh
 ```
 
+You can change the refresh rate by changing the "1m" in the name of this file to any other time value 10s, 2h, etc
+```
+gitbar.10s.rb
+gitbar.2h.rb
+```
+
 Whenever you need to add or remove repositories to track, update the json file and re-run `./copy_to_plugins.sh`
