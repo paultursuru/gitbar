@@ -12,7 +12,6 @@
 
 require 'json'
 require_relative 'gitbar_app/config/setup.rb'
-# require_relative 'gitbar_app/models/repository.rb'
 require_relative 'gitbar_app/view.rb'
 require_relative 'gitbar_app/repositories_controller.rb'
 
