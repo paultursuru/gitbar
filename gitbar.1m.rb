@@ -11,27 +11,20 @@
 # You can change the refresh rate by changing the "1m" in the name of this file to any other time value 10s, 2h, etc
 
 require 'json'
-require_relative 'gitbar_app/models/repository.rb'
+require_relative 'gitbar_app/config/setup.rb'
+# require_relative 'gitbar_app/models/repository.rb'
 require_relative 'gitbar_app/view.rb'
 require_relative 'gitbar_app/repositories_controller.rb'
 
-# Loading repositories list
-settings_path = File.join(__dir__, 'gitbar_app', 'config', 'settings.json')
-settings = JSON.parse(File.read(settings_path))
+# Setup
+SETTINGS = Setup.load_settings
+USERNAME = Setup.fetch_username
+FULL_VIEW_ARRAY = Setup.load_full_view_array
+IS_CONNECTED = Setup.check_connection
 
-USERNAME = settings['username']
-
-# Loading the last persisted view in case the connection is lost.
-full_view_path = File.join(__dir__, 'gitbar_app', 'config', 'view.json')
-File.write(full_view_path, []) unless File.exist?(full_view_path)
-full_view_array = JSON.parse(File.read(full_view_path))
-
-# Checking connection - sending only one packet
-ping_to_gh = `ping -c 1 github.com`
-
-if !ping_to_gh.empty? # Ping failed
+if IS_CONNECTED
   # Loading repositories data
-  repositories_controller = RepositoriesController.new(repositories_data: settings['repositories'])
+  repositories_controller = RepositoriesController.new(repositories_data: SETTINGS['repositories'])
   repositories = repositories_controller.fetch_repositories # will fetch repos using `gh`
 
   # Displaying the menu and repositories, full_view_array is preloaded from the json file.
