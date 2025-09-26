@@ -27,6 +27,7 @@ class Repository
     rescue
       output = `/usr/local/bin/gh pr list --repo #{@name} --state open --json title,number,url,reviews,reviewRequests,author,updatedAt,mergeable,statusCheckRollup,headRefName`
     end
+
     json = JSON.parse(output)
     json.each do |pr|
       @pull_requests << PullRequest.new(pr_data: pr)
@@ -55,6 +56,7 @@ class Repository
     rescue
       output = `/usr/local/bin/gh api repos/#{@name}/commits/#{@default_branch}/status`
     end
+
     @status = JSON.parse(output)['state']
     @status_details = JSON.parse(output)['statuses']
   end

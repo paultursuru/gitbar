@@ -4,15 +4,27 @@ require_relative 'helpers/application_helper.rb'
 # Renders SwiftBar/BitBar/Xbar output for repositories and pull requests.
 class View
   include ApplicationHelper
+  attr_accessor :full_view_array
 
-  def initialize(repositories: [])
+  def initialize(repositories: [], full_view_array: [], offline: false)
     @repositories = repositories
+    @full_view_array = full_view_array
+    @offline = offline
+    insert_offline_message if @offline
   end
 
-  def display
+  def prepare_full_view
     display_header
     separator
     display_repositories
+    separator
+    insert_line(body: "Last updated: #{Time.now.strftime('%Y-%m-%d %H:%M:%S')}", level: 0)
+  end
+
+  def display
+    full_view_array.each do |line|
+      puts line
+    end
   end
 
   def display_header
@@ -26,11 +38,11 @@ class View
     options[:size] = 11 if options[:size].nil?
     full_text += " |" if options.any?
     full_text += " #{options.map { |key, value| "#{key}=#{value}" }.join(' ')}"
-    puts full_text
+    @full_view_array << full_text
   end
 
   def separator
-    puts "---"
+    insert_line(body: "---", level: 0)
   end
 
   def display_repositories
@@ -75,5 +87,9 @@ class View
       insert_line(body: "#{reviews.last.state.downcase.capitalize.gsub('_', ' ')} by #{login}", level: 2, icon: review_icon(pr_review: reviews.last),
                   options: { color: review_color(pr_review: reviews.last) })
     end
+  end
+
+  def insert_offline_message
+    insert_line(body: "Offline mode", level: 0, icon: '⚠️')
   end
 end
