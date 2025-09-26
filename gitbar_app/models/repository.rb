@@ -20,13 +20,7 @@ class Repository
   end
 
   def add_pull_requests
-    # Try to use the homebrew version of gh,
-    # if it's not available, use the macOS version.
-    begin
-      output = `/opt/homebrew/bin/gh pr list --repo #{@name} --state open --json title,number,url,reviews,reviewRequests,author,updatedAt,mergeable,statusCheckRollup,headRefName`
-    rescue
-      output = `/usr/local/bin/gh pr list --repo #{@name} --state open --json title,number,url,reviews,reviewRequests,author,updatedAt,mergeable,statusCheckRollup,headRefName`
-    end
+    output = `#{GH_PATH} pr list --repo #{@name} --state open --json title,number,url,reviews,reviewRequests,author,updatedAt,mergeable,statusCheckRollup,headRefName`
 
     json = JSON.parse(output)
     json.each do |pr|
@@ -51,11 +45,7 @@ class Repository
   end
 
   def current_status
-    begin
-      output = `/opt/homebrew/bin/gh api repos/#{@name}/commits/#{@default_branch}/status`
-    rescue
-      output = `/usr/local/bin/gh api repos/#{@name}/commits/#{@default_branch}/status`
-    end
+    output = `#{GH_PATH} api repos/#{@name}/commits/#{@default_branch}/status`
 
     @status = JSON.parse(output)['state']
     @status_details = JSON.parse(output)['statuses']

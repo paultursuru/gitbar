@@ -16,10 +16,13 @@ require_relative 'gitbar_app/view.rb'
 require_relative 'gitbar_app/repositories_controller.rb'
 
 # Setup
-SETTINGS = Setup.load_settings
-USERNAME = Setup.fetch_username
-FULL_VIEW_ARRAY = Setup.load_full_view_array
 IS_CONNECTED = Setup.check_connection
+GH_PATH = Setup.gh_path
+# gh is then used to get Username, Current Status of each repo and Pull Requests
+USERNAME = Setup.fetch_username
+SETTINGS = Setup.load_settings
+# Loading a backup view in case connection is down
+FULL_VIEW_ARRAY = Setup.load_full_view_array
 
 if IS_CONNECTED
   # Loading repositories data
@@ -32,8 +35,8 @@ if IS_CONNECTED
   view.prepare_full_view # Will update full_view_array
   repositories_controller.persists_view(view: view) # Will update view.json with what's in full_view_array
 else
-  # In case you lose connection, we need to display something instead of a timeout error braking the plugin.
-  view = View.new(repositories: [], full_view_array: full_view_array, offline: true)
+  # In case connection is lost, we need to display something instead of a timeout error (breaking the plugin).
+  view = View.new(repositories: [], full_view_array: FULL_VIEW_ARRAY, offline: true)
 end
 
 view.display # Will display whatever is in full_view_array

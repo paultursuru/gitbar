@@ -4,12 +4,23 @@
 # of the Gitbar application. It handles loading settings, ensuring necessary
 # configurations are present, and preparing the application environment.
 class Setup
-  def self.fetch_username
-    begin
-      whoami = `/opt/homebrew/bin/gh config get user -h github.com`
-    rescue StandardError
-      whoami = `/usr/local/bin/gh config get user -h github.com`
+  # check weither GH is installed with brew or local
+  def self.gh_path
+    # Common paths for gh
+    if File.exist?('/opt/homebrew/bin/gh')
+      gh_cli_path = '/opt/homebrew/bin/gh'
+    elsif File.exist?('/usr/local/bin/gh')
+      gh_cli_path = '/usr/local/bin/gh'
     end
+
+    # If gh_cli_path is still nil, it means 'gh' was not found
+    raise 'GitHub CLI (gh) not found. Please install it to use Gitbar.' if gh_cli_path.nil?
+
+    gh_cli_path
+  end
+
+  def self.fetch_username
+    whoami = `#{GH_PATH} config get user -h github.com`
     whoami.strip
   end
 
@@ -29,6 +40,11 @@ class Setup
   def self.check_connection
     # Checking connection - sending only one packet
     ping_to_gh = `ping -c 1 github.com`
-    !ping_to_gh.empty? # If it is not empty, then the connection is successfull
+    if ping_to_gh.empty? # No connection
+      puts '⚠️ No connection to GitHub' # Will be displayed as plugin header
+      false
+    else # If it is not empty, then the connection is successfull
+      true
+    end
   end
 end
