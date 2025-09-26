@@ -13,6 +13,7 @@ class RepositoriesController
     end
   end
 
+  # Storing the whole created view inside view.json, in case connection is lost
   def persists_view(view:)
     path = File.join(__dir__, 'config', 'view.json')
     File.write(path, view.full_view_array.to_json)
