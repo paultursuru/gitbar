@@ -6,15 +6,19 @@
 class Setup
   # check weither GH is installed with brew or local
   def self.gh_path
+    gh_cli_path = `which gh`.strip
+
     # Common paths for gh
-    if File.exist?('/opt/homebrew/bin/gh')
-      gh_cli_path = '/opt/homebrew/bin/gh'
-    elsif File.exist?('/usr/local/bin/gh')
-      gh_cli_path = '/usr/local/bin/gh'
+    if gh_cli_path.empty?
+      if File.exist?('/opt/homebrew/bin/gh')
+        gh_cli_path = '/opt/homebrew/bin/gh'
+      elsif File.exist?('/usr/local/bin/gh')
+        gh_cli_path = '/usr/local/bin/gh'
+      end
     end
 
     # If gh_cli_path is still nil, it means 'gh' was not found
-    raise 'GitHub CLI (gh) not found. Please install it to use Gitbar.' if gh_cli_path.nil?
+    raise 'GitHub CLI (gh) not found. Please install it to use Gitbar.' if gh_cli_path.empty?
 
     gh_cli_path
   end
