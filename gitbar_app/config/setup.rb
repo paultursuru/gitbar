@@ -4,20 +4,10 @@
 # of the Gitbar application. It handles loading settings, ensuring necessary
 # configurations are present, and preparing the application environment.
 class Setup
-  # check weither GH is installed with brew or local
+  # check weither GH is installed or not and it's path
   def self.gh_path
-    gh_cli_path = `which gh`.strip
+    gh_cli_path = `command -v gh`.strip
 
-    # Common paths for gh
-    if gh_cli_path.empty?
-      if File.exist?('/opt/homebrew/bin/gh')
-        gh_cli_path = '/opt/homebrew/bin/gh'
-      elsif File.exist?('/usr/local/bin/gh')
-        gh_cli_path = '/usr/local/bin/gh'
-      end
-    end
-
-    # If gh_cli_path is still nil, it means 'gh' was not found
     raise 'GitHub CLI (gh) not found. Please install it to use Gitbar.' if gh_cli_path.empty?
 
     gh_cli_path
@@ -28,14 +18,14 @@ class Setup
     whoami.strip
   end
 
+  # Loading repositories list
   def self.load_settings
-    # Loading repositories list
     settings_path = File.join(__dir__, 'settings.json')
     JSON.parse(File.read(settings_path))
   end
 
+  # Loading the last persisted view in case the connection is lost.
   def self.load_full_view_array
-    # Loading the last persisted view in case the connection is lost.
     full_view_path = File.join(__dir__, 'view.json')
     File.write(full_view_path, []) unless File.exist?(full_view_path)
     JSON.parse(File.read(full_view_path))
