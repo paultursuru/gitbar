@@ -11,27 +11,22 @@
 # You can change the refresh rate by changing the "1m" in the name of this file to any other time value 10s, 2h, etc
 
 require 'json'
-require_relative 'gitbar_app/models/repository.rb'
+require_relative 'gitbar_app/config/setup.rb'
 require_relative 'gitbar_app/view.rb'
 require_relative 'gitbar_app/repositories_controller.rb'
 
-# Loading repositories list
-settings_path = File.join(__dir__, 'gitbar_app', 'config', 'settings.json')
-settings = JSON.parse(File.read(settings_path))
+# Setup
+IS_CONNECTED = Setup.check_connection
+GH_PATH = Setup.gh_path
+# gh is then used to get Username, Current Status of each repo and Pull Requests
+USERNAME = Setup.fetch_username
+SETTINGS = Setup.load_settings
+# Loading a backup view in case connection is down
+FULL_VIEW_ARRAY = Setup.load_full_view_array
 
-USERNAME = settings['username']
-
-# Loading the last persisted view in case the connection is lost.
-full_view_path = File.join(__dir__, 'gitbar_app', 'config', 'view.json')
-File.write(full_view_path, []) unless File.exist?(full_view_path)
-full_view_array = JSON.parse(File.read(full_view_path))
-
-# Checking connection - sending only one packet
-ping_to_gh = `ping -c 1 github.com`
-
-if !ping_to_gh.empty? # Ping failed
+if IS_CONNECTED
   # Loading repositories data
-  repositories_controller = RepositoriesController.new(repositories_data: settings['repositories'])
+  repositories_controller = RepositoriesController.new(repositories_data: SETTINGS['repositories'])
   repositories = repositories_controller.fetch_repositories # will fetch repos using `gh`
 
   # Displaying the menu and repositories, full_view_array is preloaded from the json file.
@@ -40,8 +35,8 @@ if !ping_to_gh.empty? # Ping failed
   view.prepare_full_view # Will update full_view_array
   repositories_controller.persists_view(view: view) # Will update view.json with what's in full_view_array
 else
-  # In case you lose connection, we need to display something instead of a timeout error braking the plugin.
-  view = View.new(repositories: [], full_view_array: full_view_array, offline: true)
+  # In case connection is lost, we need to display something instead of a timeout error (breaking the plugin).
+  view = View.new(repositories: [], full_view_array: FULL_VIEW_ARRAY, offline: true)
 end
 
 view.display # Will display whatever is in full_view_array

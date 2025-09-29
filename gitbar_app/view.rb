@@ -10,7 +10,7 @@ class View
     @repositories = repositories
     @full_view_array = full_view_array
     @offline = offline
-    insert_offline_message if @offline
+    insert_offline_message if @offline # Displaying the offline message if connection is lost
   end
 
   def prepare_full_view
