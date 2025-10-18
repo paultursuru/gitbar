@@ -10,30 +10,22 @@ class GhService
   end
 
   def fetch_branches_not_open_prs
-    branches_names = fetch_branches_names_for_repo
-    branches_names.each do |branch_name|
-      output = `#{GH_PATH} api repos/#{@repo_name}/branches/#{branch_name}/prs --jq '.[].number'`
-      output.split("\n")
-    end
-  end
-
-  def fetch_branches_names_for_repo
     owner, repo = @repo_name.split('/', 2)
 
-    output = `#{GH_PATH} api graphql -f owner=#{owner} -f repo=#{repo} -f query='#{graphql_query_for_last_branches}'`
+    output = `#{GH_PATH} api graphql -f owner=#{owner} -f repo=#{repo} -f query='#{graphql_query_for_last_branches_open}'`
     data = JSON.parse(output)
 
     nodes = data.dig('data', 'repository', 'refs', 'nodes') || []
     nodes_with_dates = nodes.select do |node|
       target = node['target']
-      target && (target['pushedDate'] || target['committedDate']) && target['author']['user']['login'] == USERNAME
+      target && target['committedDate'] && target['author']['user']['login'] == USERNAME && target['associatedPullRequests']['totalCount'].zero?
     end
     nodes_with_dates.map { |node| node['name'] } | []
   end
 
   private
 
-  def graphql_query_for_last_branches
+  def graphql_query_for_last_branches_open
     <<~GRAPHQL
       query($owner: String!, $repo: String!) {
         repository(owner: $owner, name: $repo) {
@@ -45,6 +37,14 @@ class GhService
                   committedDate
                   author {
                     user { login }
+                  }
+                  associatedPullRequests(first: 10, orderBy: {field: UPDATED_AT, direction: DESC}) {
+                    totalCount
+                    nodes {
+                      title
+                      state
+                      merged
+                    }
                   }
                 }
               }
