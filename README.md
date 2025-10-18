@@ -39,18 +39,18 @@ As said above, it is an xbar plugin, so you'll need it installed to use GitBar :
 brew install --cask xbar
 ```
 
-GitBar uses `gh` to fetch the latest release of the repo. You will need to install [GitHub CLI](https://github.com/cli/cli) to use this plugin and also login to your github account.
+GitBar uses `gh` to fetch the latest release of the repo. You will need to install [GitHub CLI](https://github.com/cli/cli) to use GitBar and also login to your github account.
 ```
 brew install gh
 gh auth login
 ```
 
-Inside gitbar_app/config, you'll find a `settings.json.example`, update the username and repositories list before next step and rename it to `settings.json`.
+Inside gitbar_app/config, you'll find a [settings.json.example](https://github.com/paultursuru/gitbar/blob/main/gitbar_app/config/settings.json.example), update the username and repositories list before next step and rename it to `settings.json`.
 This file here : 
 <img width="695" alt="image" src="https://github.com/user-attachments/assets/e0f6b640-0be0-4838-a110-3988074e63f0">
 
 
-Finally, there is [a script](https://github.com/paultursuru/gitbar/blob/9b854c7ae43783a9a45ce98a7e5e0b8c81c16d08/copy_to_plugins.sh) to install the app in xbar plugins. Make this script executable and run it to copy the GitBar plugin inside the xbar plugins folder.
+Finally, there is [a script](https://github.com/paultursuru/gitbar/blob/main/copy_to_plugins.sh) to install the app in xbar plugins. Make this script executable and run it to copy the GitBar plugin inside the xbar plugins folder.
 You don't _have_ to use this script, it is just here to make it easier to copy the plugin files to the correct location.
 ```
 chmod +x copy_to_plugins.sh
@@ -62,7 +62,6 @@ You can change the refresh rate by changing the "1m" in the name of this file to
 gitbar.10s.rb
 gitbar.2h.rb
 ```
-
 Whenever you need to make changes to the config file, update the `settings.json` file and re-run `./copy_to_plugins.sh`
 
 ## Offline mode
@@ -83,7 +82,7 @@ If you are having issues with the plugin, please check the following:
 If you are still having issues, please open an issue on the [GitHub repository](https://github.com/paultursuru/gitbar/issues).
 
 ## Contributing
-If you want to contribute to the project, please feel free to open a pull request.
+If you want to contribute to the project, please feel free to fork the repository and open a pull request.
 
 ## Credits
 - [GitHub CLI](https://github.com/cli/cli)
