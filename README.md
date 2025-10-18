@@ -36,3 +36,23 @@ gitbar.2h.rb
 ```
 
 Whenever you need to add or remove repositories to track, update the json file and re-run `./copy_to_plugins.sh`
+
+# Per-repository display
+Display for each repository:
+- Repository: link to the repository with default-branch status icon
+- Status checks: each check’s description, direct link, and relative time
+- Pull requests grouped:
+  - 👀 Review requested
+  - 👍 Already reviewed
+  - 🤓 Your open PRs
+- For each PR:
+  - Title (linked)
+  - Head branch
+  - Latest review state per reviewer
+  - Combined status check state (colored, linked)
+  - Mergeability
+  - Time since last update (for items awaiting your review)
+- Branches without an open PR: quick compare links
+- Footer: 
+  - “Last updated” timestamp
+  - “Offline mode” message if connection is lost
