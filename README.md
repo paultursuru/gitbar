@@ -43,7 +43,7 @@ Display for each repository:
 - Status checks: each check’s description, direct link, and relative time
 - Pull requests grouped:
   - 👀 Review requested
-  - 👍 Already reviewed
+  - 👍 Already reviewed (or no reviews needed)
   - 🤓 Your open PRs
 - For each PR:
   - Title (linked)
