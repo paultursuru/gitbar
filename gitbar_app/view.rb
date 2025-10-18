@@ -82,7 +82,9 @@ class View
   end
 
   def display_branches(repository:)
-    insert_line(body: "#{repository.my_branches.count} branches", level: 0, icon: '🌳')
+    return if repository.my_branches.empty?
+
+    insert_line(body: "#{repository.my_branches.count} branch#{repository.my_branches.count > 1 ? 'es' : ''} to compare", level: 0, icon: '🌳')
     repository.my_branches.each do |branch|
       insert_line(body: branch, level: 1, icon: '🔗', options: { href: "https://github.com/#{repository.name}/compare/#{branch}?expand=1" })
     end
