@@ -59,6 +59,7 @@ class View
       insert_line(body: time_since(updated_at: detail['created_at']), level: 1)
     end
     display_pull_requests(repository: repository)
+    display_branches(repository: repository)
   end
 
   def display_pull_requests(repository:)
@@ -77,6 +78,13 @@ class View
                   options: { color: status_color(pull_request: pr), href: pr.status_check_rollup })
       insert_line(body: mergeable_text(pull_request: pr), level: 2, icon: status_icon(status: pr.mergeable), options: { color: mergeable_color(pull_request: pr) })
       insert_line(body: time_since(updated_at: pr.updated_at), level: 2) if to_review
+    end
+  end
+
+  def display_branches(repository:)
+    insert_line(body: "#{repository.my_branches.count} branches", level: 0, icon: '🌳')
+    repository.my_branches.each do |branch|
+      insert_line(body: branch, level: 1, icon: '🔗', options: { href: "https://github.com/#{repository.name}/tree/#{branch}" })
     end
   end
 

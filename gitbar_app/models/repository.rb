@@ -1,5 +1,6 @@
 require_relative 'pull_request'
 require_relative 'review_request'
+require_relative '../services/gh_service'
 
 # Repository
 # Value object for a GitHub repository with pull requests,
@@ -38,6 +39,10 @@ class Repository
 
   def my_prs
     @pull_requests.select { |pr| pr.is_mine? }
+  end
+
+  def my_branches
+    GhService.new(repo_name: @name).fetch_branches_names_for_repo
   end
 
   def review_requested?(review_requests)
