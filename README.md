@@ -65,7 +65,6 @@ Whenever you need to make changes to the config file, update the `settings.json`
 ## Offline mode
 Whenever the GitBar runs, it will check if you are connected to the internet. If you are, it will fetch all the data needed and persist it in the `view.json` file.
 If you are not, it will display a message in the header and the footer and use the last persisted data in the `view.json` file.
-The plugin will then display a message in the header and the footer.
 ```
 Last updated: 2025-10-19 12:00:00
 Offline mode
