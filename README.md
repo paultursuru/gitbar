@@ -3,6 +3,33 @@ GitBar is an [xbar plugin](https://github.com/matryer/xbar-plugins) that will ke
 
 <img width="879" alt="image" src="https://github.com/user-attachments/assets/5e54abc0-25e2-478c-89a0-103104ae512a">
 
+## Information displayed
+### Header
+- Name and status icon for the first repo of the list with :
+  - PR ready to merge counter (✅)
+  - PR with changes requested counter (❌)
+  - PR with review requested counter (👀)
+
+### Per-repository display
+- Repository name (link with a status icon for the default branch)
+- Status checks (each check’s description, direct link, and relative time)
+  - On my setup, I get the CI and Deployment status checks (TODO : Should become configurable)
+- Pull requests grouped:
+  - Review requested (👀)
+  - Already reviewed (👍) (or no reviews needed)
+  - Your open PRs (🤓)
+- Branches without an open PR (link to "compare and open PR" page)
+- For each PR:
+  - Title (link)
+  - Branch name (link)
+  - Latest review state per reviewer
+  - Combined status check state (CI status, Deployment status if any)
+  - Mergeability (No conflict, Conflicts, etc)
+  - Time since last update (for items awaiting your review)
+- Footer: 
+  - “Last updated” timestamp
+  - “Offline mode” message if connection is lost
+
 
 # Installation
 Git Clone this repo, cd in the folder and run the following commands to install the plugin:
@@ -37,22 +64,3 @@ gitbar.2h.rb
 
 Whenever you need to add or remove repositories to track, update the json file and re-run `./copy_to_plugins.sh`
 
-# Per-repository display
-Display for each repository:
-- Repository: link to the repository with default-branch status icon
-- Status checks: each check’s description, direct link, and relative time
-- Pull requests grouped:
-  - 👀 Review requested
-  - 👍 Already reviewed (or no reviews needed)
-  - 🤓 Your open PRs
-- For each PR:
-  - Title (linked)
-  - Head branch
-  - Latest review state per reviewer
-  - Combined status check state (colored, linked)
-  - Mergeability
-  - Time since last update (for items awaiting your review)
-- Branches without an open PR: quick compare links
-- Footer: 
-  - “Last updated” timestamp
-  - “Offline mode” message if connection is lost
