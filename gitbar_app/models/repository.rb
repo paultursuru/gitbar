@@ -22,10 +22,9 @@ class Repository
   end
 
   def add_pull_requests
-    output = `#{GH_PATH} pr list --repo #{@name} --state open --json title,number,url,reviews,reviewRequests,author,updatedAt,mergeable,statusCheckRollup,headRefName`
+    json_pull_requests = GhService.new(repo_name: @name).fetch_pull_requests
 
-    json = JSON.parse(output)
-    json.each do |pr|
+    json_pull_requests.each do |pr|
       @pull_requests << PullRequest.new(pr_data: pr)
     end
   end
@@ -51,10 +50,10 @@ class Repository
   end
 
   def current_status
-    output = `#{GH_PATH} api repos/#{@name}/commits/#{@default_branch}/status`
+    status = GhService.new(repo_name: @name).fetch_status(branch: @default_branch)
 
-    @status = JSON.parse(output)['state']
-    @status_details = JSON.parse(output)['statuses']
+    @status = status['state']
+    @status_details = status['statuses']
   end
 
   def simple_name
