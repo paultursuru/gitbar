@@ -6,11 +6,12 @@ require_relative '../services/gh_service'
 # Value object for a GitHub repository with pull requests,
 # exposing convenience predicates for ownership and mergeability.
 class Repository
-  attr_accessor :name, :pull_requests, :url, :status, :status_details, :default_branch
+  attr_accessor :name, :pull_requests, :url, :status, :status_details, :default_branch, :local_path
 
-  def initialize(name:, default_branch:)
-    @name = name
-    @default_branch = default_branch
+  def initialize(repository_data:)
+    @name = repository_data['name']
+    @default_branch = repository_data['default_branch']
+    @local_path = repository_data['local_path']
     @pull_requests = []
     @url = nil
     add_pull_requests

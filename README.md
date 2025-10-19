@@ -18,7 +18,12 @@ GitBar is an [xbar plugin](https://github.com/matryer/xbar-plugins) that will ke
   - Review requested (👀)
   - Already reviewed (👍) (or no reviews needed)
   - Your open PRs (🤓)
-- Branches without an open PR (link to "compare and open PR" page)
+- Branches without an open PR :
+  - Number of branches (🌳)
+  - List of branches (🔗) with a link to "compare and open PR" page
+  - Not displayed if there are no branches without an open PR
+- Open in terminal (💻) 
+  - Link to the local path of the repository (if configured)
 - For each PR:
   - Title (link)
   - Branch name (link)
