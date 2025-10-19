@@ -15,10 +15,14 @@ class PullRequest
   end
 
   def generate_reviews(reviews_data:)
+    return if reviews_data.empty?
+
     reviews_data.each { |review| @reviews << Review.new(review_data: review) }
   end
 
   def generate_review_requests(review_requests_data:)
+    return if review_requests_data.empty?
+
     review_requests_data.each { |review_request| @review_requests << ReviewRequest.new(review_request_data: review_request) }
   end
 

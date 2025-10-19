@@ -129,3 +129,6 @@ Style/SymbolProc:
 # URISchemes: http, https
 Layout/LineLength:
   Max: 195
+
+Metrics/BlockLength:
+  Max: 35

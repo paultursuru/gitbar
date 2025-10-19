@@ -9,6 +9,18 @@ class GhService
     @repo_name = repo_name
   end
 
+  def fetch_pull_requests
+    pull_requests = `#{GH_PATH} pr list --repo #{@repo_name} --state open --json title,number,url,reviews,reviewRequests,author,updatedAt,mergeable,statusCheckRollup,headRefName`
+
+    JSON.parse(pull_requests)
+  end
+
+  def fetch_status(branch:)
+    status = `#{GH_PATH} api repos/#{@repo_name}/commits/#{branch}/status`
+
+    JSON.parse(status)
+  end
+
   def fetch_branches_not_open_prs
     owner, repo = @repo_name.split('/', 2)
 
