@@ -2,11 +2,13 @@
     "repositories": [
         {
             "name": "paultursuru/gitbar",
-            "default_branch": "main"
+            "default_branch": "main",
+            "local_path": "~/paultursuru/gitbar"
         },
         {
-            "name": "other/repo",
-            "default_branch": "master"
+            "name": "some/other/repo",
+            "default_branch": "master",
+            "local_path": "~/path/to/some/other/repo"
         }
     ]
 }

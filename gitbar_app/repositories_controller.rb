@@ -9,7 +9,7 @@ class RepositoriesController
 
   def fetch_repositories
     @repositories_data.map do |repository_data|
-      Repository.new(name: repository_data['name'], default_branch: repository_data['default_branch'])
+      Repository.new(repository_data: repository_data)
     end
   end
 

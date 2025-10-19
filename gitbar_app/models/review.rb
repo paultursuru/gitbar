@@ -6,6 +6,6 @@ class Review
   def initialize(review_data:)
     @state = review_data['state']
     @body = review_data['body']
-    @author = review_data['author']['login']
+    @author = review_data.dig('author', 'login')
   end
 end

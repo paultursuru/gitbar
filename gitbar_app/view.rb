@@ -60,6 +60,7 @@ class View
     end
     display_pull_requests(repository: repository)
     display_branches(repository: repository)
+    insert_link_to_local_path(repository: repository)
   end
 
   def display_pull_requests(repository:)
@@ -101,5 +102,11 @@ class View
 
   def insert_offline_message
     insert_line(body: "Offline mode", level: 0, icon: '⚠️')
+  end
+
+  def insert_link_to_local_path(repository:)
+    return if repository.local_path.nil?
+
+    insert_line(body: "Open in terminal", level: 0, icon: '💻', options: { size: 12, shell: 'cd', param1: repository.local_path, terminal: true })
   end
 end
