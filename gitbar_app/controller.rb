@@ -1,8 +1,8 @@
 require_relative 'models/repository.rb'
 
-# RepositoriesController
+# Controller
 # Service controller to construct `Repository` objects from provided data.
-class RepositoriesController
+class Controller
   def initialize(repositories_data:)
     @repositories_data = repositories_data || []
   end

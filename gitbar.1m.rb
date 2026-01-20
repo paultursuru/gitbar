@@ -13,7 +13,7 @@
 require 'json'
 require_relative 'gitbar_app/config/setup.rb'
 require_relative 'gitbar_app/view.rb'
-require_relative 'gitbar_app/repositories_controller.rb'
+require_relative 'gitbar_app/controller.rb'
 
 # Setup
 IS_CONNECTED = Setup.check_connection
@@ -26,14 +26,14 @@ FULL_VIEW_ARRAY = Setup.load_full_view_array
 
 if IS_CONNECTED
   # Loading repositories data
-  repositories_controller = RepositoriesController.new(repositories_data: SETTINGS['repositories'])
-  repositories = repositories_controller.fetch_repositories # will fetch repos using `gh`
+  controller = Controller.new(repositories_data: SETTINGS['repositories'])
+  repositories = controller.fetch_repositories # will fetch repos using `gh`
 
   # Displaying the menu and repositories, full_view_array is preloaded from the json file.
   # If we have some data, the array will be refreshed
   view = View.new(repositories: repositories, full_view_array: [])
   view.prepare_full_view # Will update full_view_array
-  repositories_controller.persists_view(view: view) # Will update view.json with what's in full_view_array
+  controller.persists_view(view: view) # Will update view.json with what's in full_view_array
 else
   # In case connection is lost, we need to display something instead of a timeout error (breaking the plugin).
   view = View.new(repositories: [], full_view_array: FULL_VIEW_ARRAY, offline: true)
