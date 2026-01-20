@@ -67,6 +67,9 @@ gitbar.2h.rb
 ```
 Whenever you need to make changes to the config file, update the `settings.json` file and re-run `./copy_to_plugins.sh`
 
+## What about Linux ?
+Here is a version made by [vrehm](https://github.com/vrehm) using Argos : [https://github.com/vrehm/argos-gitbar](https://github.com/vrehm/argos-gitbar)
+
 ## Offline mode
 Whenever the GitBar runs, it will check if you are connected to the internet. If you are, it will fetch all the data needed and persist it in the `view.json` file.
 If you are not, it will display a message in the header and the footer and use the last persisted data in the `view.json` file.
