@@ -33,7 +33,7 @@ if IS_CONNECTED
   # If we have some data, the array will be refreshed
   view = View.new(repositories: repositories, full_view_array: [])
   view.prepare_full_view # Will update full_view_array
-  controller.persists_view(view: view) # Will update view.json with what's in full_view_array
+  controller.persist_view(view: view) # Will update view.json with what's in full_view_array
 else
   # In case connection is lost, we need to display something instead of a timeout error (breaking the plugin).
   view = View.new(repositories: [], full_view_array: FULL_VIEW_ARRAY, offline: true)
