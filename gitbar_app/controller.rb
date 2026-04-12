@@ -1,4 +1,6 @@
-require_relative 'models/repository.rb'
+# frozen_string_literal: true
+
+require_relative 'models/repository'
 
 # Controller
 # Service controller to construct `Repository` objects from provided data.
