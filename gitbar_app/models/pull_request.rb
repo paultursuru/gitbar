@@ -42,7 +42,7 @@ class PullRequest
   end
 
   def set_pr_with(pr_data:)
-    @title = pr_data.dig('title')
+    @title = pr_data.dig('title').gsub('|', ' ')
     @number = pr_data.dig('number')
     @url = pr_data.dig('url')
     @status_check_rollup = pr_data.dig('statusCheckRollup', 0, 'targetUrl')
