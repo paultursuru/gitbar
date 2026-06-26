@@ -9,11 +9,14 @@ class Controller
     @repositories_data = repositories_data || []
   end
 
-  # Fetching repositories from the data
+  # Fetching repositories from the data.
+  # Each repository triggers several independent `gh` calls (network/IO bound),
+  # so we build them in parallel threads. Ruby releases the GIL while waiting on
+  # the subprocess, giving a near-linear speedup with the number of repos.
   def fetch_repositories
     @repositories_data.map do |repository_data|
-      Repository.new(repository_data: repository_data)
-    end
+      Thread.new { Repository.new(repository_data: repository_data) }
+    end.map(&:value)
   end
 
   # Storing the whole created view inside view.json, in case connection is lost

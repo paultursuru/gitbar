@@ -1,5 +1,5 @@
 # GitBar
-GitBar is an [xbar plugin](https://github.com/matryer/xbar-plugins) that will keep you updated on the branches and open pull requests on one or many repository. It refreshes every minute by default.
+GitBar is an [xbar plugin](https://github.com/matryer/xbar-plugins) that will keep you updated on the branches and open pull requests on one or many repository. It refreshes every minute by default, and fetches every repository in parallel so adding more repos barely costs you any extra time (see [Performance](#performance)).
 
 <img width="879" alt="image" src="https://github.com/user-attachments/assets/5e54abc0-25e2-478c-89a0-103104ae512a">
 
@@ -78,6 +78,11 @@ Last updated: 2025-10-19 12:00:00
 Offline mode
 ```
 
+## Performance
+Great news if you track several repositories: GitBar fetches all of them **in parallel**. Every repository's data is gathered concurrently rather than one after another, so the total refresh time is roughly that of the single slowest repo instead of the sum of all of them.
+
+In practice, a setup with 5 repositories (one of them very busy) went from **~45s down to ~7s** per refresh. Adding a repo to your `settings.json` now adds very little to the overall refresh time.
+
 ## Troubleshooting
 If you are having issues with the plugin, please check the following:
 - Make sure you are connected to the internet
@@ -92,3 +97,4 @@ If you want to contribute to the project, please feel free to fork the repositor
 ## Credits
 - [GitHub CLI](https://github.com/cli/cli)
 - [xbar](https://github.com/matryer/xbar-plugins)
+- Thanks to [Alexis Bernard](https://github.com/alexisbernard) from [BaseSecrete](https://github.com/BaseSecrete) for suggesting the parallel fetching approach
