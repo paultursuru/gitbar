@@ -43,7 +43,7 @@ class Repository
   end
 
   def my_branches
-    GhService.new(repo_name: @name).fetch_branches_not_open_prs
+    @my_branches ||= GhService.new(repo_name: @name).fetch_branches_not_open_prs
   end
 
   def review_requested?(review_requests)
