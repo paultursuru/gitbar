@@ -1,4 +1,5 @@
 require_relative 'review'
+require_relative '../services/status_checks'
 
 # PullRequest
 # Value object for a GitHub pull request with reviews and review requests,
@@ -45,12 +46,49 @@ class PullRequest
     @title = pr_data.dig('title').gsub('|', ' ')
     @number = pr_data.dig('number')
     @url = pr_data.dig('url')
-    @status_check_rollup = pr_data.dig('statusCheckRollup', 0, 'targetUrl')
-    @status_check_rollup_state = pr_data.dig('statusCheckRollup', 0, 'state')
-    @status_check_rollup_context = pr_data.dig('statusCheckRollup', 0, 'context')
+    set_status_check_rollup(rollup_data: pr_data.dig('statusCheckRollup'))
     @author = pr_data.dig('author', 'login')
     @updated_at = pr_data.dig('updatedAt')
     @mergeable = pr_data.dig('mergeable')
     @head_ref_name = pr_data.dig('headRefName')
+  end
+
+  # statusCheckRollup is a list mixing StatusContext (legacy commit statuses)
+  # and CheckRun (GitHub Actions) entries. We aggregate them into one state and
+  # surface a representative check (a failing/pending one first) for the link.
+  def set_status_check_rollup(rollup_data:)
+    checks = (rollup_data || []).map { |check| normalize_rollup_check(check) }
+    return if checks.empty?
+
+    representative = representative_check(checks)
+    @status_check_rollup_state = StatusChecks.aggregate(checks.map { |check| check[:state] })&.upcase
+    @status_check_rollup_context = representative[:context]
+    @status_check_rollup = representative[:url]
+  end
+
+  # Surface the most actionable check for the displayed link/label:
+  # a failing one first, then a pending one, else the first.
+  def representative_check(checks)
+    checks.find { |check| check[:state] == 'failure' } ||
+      checks.find { |check| check[:state] == 'pending' } ||
+      checks.first
+  end
+
+  def normalize_rollup_check(check)
+    return check_run_rollup(check) if check['__typename'] == 'CheckRun' || check.key?('conclusion')
+
+    {
+      state: StatusChecks.commit_status_state(check['state']),
+      context: check['context'],
+      url: check['targetUrl']
+    }
+  end
+
+  def check_run_rollup(check)
+    {
+      state: StatusChecks.check_run_state(status: check['status'], conclusion: check['conclusion']),
+      context: check['name'] || check['workflowName'],
+      url: check['detailsUrl']
+    }
   end
 end

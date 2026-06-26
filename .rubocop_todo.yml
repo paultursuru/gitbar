@@ -132,3 +132,5 @@ Layout/LineLength:
 
 Metrics/BlockLength:
   Max: 35
+  Exclude:
+    - 'spec/**/*'
