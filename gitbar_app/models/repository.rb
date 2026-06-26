@@ -1,6 +1,7 @@
 require_relative 'pull_request'
 require_relative 'review_request'
 require_relative '../services/gh_service'
+require_relative '../services/status_checks'
 
 # Repository
 # Value object for a GitHub repository with pull requests,
@@ -50,10 +51,22 @@ class Repository
   end
 
   def current_status
-    status = GhService.new(repo_name: @name).fetch_status(branch: @default_branch)
+    service = GhService.new(repo_name: @name)
+    combined = service.fetch_status(branch: @default_branch)
+    check_runs = service.fetch_check_runs(branch: @default_branch)
 
-    @status = status['state']
-    @status_details = status['statuses']
+    commit_statuses = combined['statuses'] || []
+    check_details = StatusChecks.normalize_check_runs(check_runs['check_runs'] || [])
+
+    # Merge legacy commit statuses and Actions check runs into one detail list.
+    @status_details = commit_statuses + check_details
+    @status = aggregate_status(combined_state: combined['state'], details: @status_details)
+  end
+
+  def aggregate_status(combined_state:, details:)
+    states = details.map { |detail| StatusChecks.commit_status_state(detail['state']) }
+    # No checks from either system: keep the API's combined state (legacy behavior).
+    StatusChecks.aggregate(states) || combined_state
   end
 
   def simple_name

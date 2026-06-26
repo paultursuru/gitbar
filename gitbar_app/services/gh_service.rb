@@ -21,6 +21,16 @@ class GhService
     JSON.parse(status)
   end
 
+  # Check Runs (GitHub Actions). The combined commit status endpoint above is
+  # blind to Actions, so we fetch them separately and merge the two systems.
+  def fetch_check_runs(branch:)
+    check_runs = `#{GH_PATH} api repos/#{@repo_name}/commits/#{branch}/check-runs`
+
+    JSON.parse(check_runs)
+  rescue JSON::ParserError
+    { 'check_runs' => [] }
+  end
+
   def fetch_branches_not_open_prs
     owner, repo = @repo_name.split('/', 2)
 
